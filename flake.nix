@@ -48,12 +48,17 @@
         };
       }) ];
     };
+    morpheusPython = (pkgs.python3.withPackages (p: [ self.packages.x86_64-linux.stream-diffusion p.av p.gradio (p.opencv4.override {enableGtk3=true;}) ]));
   in
   rec {
     packages.x86_64-linux.stream-diffusion = pkgs.python3.pkgs.callPackage ./streamDiffusion.nix {};
+    packages.x86_64-linux.morpheus = pkgs.writeShellScriptBin "morpheus" '' 
+      export LD_LIBRARY_PATH=/run/opengl-driver/lib:${pkgs.cudaPackages.cudatoolkit}/lib
+      ${morpheusPython}/bin/python3 ${./demo_webcam_morph.py}
+    '';
     devShells.x86_64-linux.default = pkgs.mkShell {
       buildInputs = with pkgs; [ 
-        (python3.withPackages (p: [ packages.x86_64-linux.stream-diffusion p.av p.gradio (p.opencv4.override {enableGtk3=true;}) ]))
+        morpheusPython
       ];
       shellHook = ''
         export LD_LIBRARY_PATH=/run/opengl-driver/lib:${pkgs.cudaPackages.cudatoolkit}/lib

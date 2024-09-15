@@ -66,7 +66,7 @@ pipe.enable_xformers_memory_efficient_attention()
 #prompt = "industrial. steel brutalist architechture"
 prompt = ""
 # Prepare the stream
-negative_prompt = "deformed, blurry, ugly"
+negative_prompt = "grimy, messy, untidy, dirty, deformed, blurry, ugly"
 #stream.prepare(prompt)
 
 stream.prepare(

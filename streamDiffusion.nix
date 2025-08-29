@@ -1,76 +1,68 @@
-{ lib
-, fetchPypi
-, buildPythonPackage
-, fetchFromGitHub
-, setuptools
-, wheel
-, torch
-, torchvision
-, xformers
-, tensorrt
-, callPackage
-, omegaconf 
-, diffusers 
-, transformers 
-, accelerate
-, peft
-, onnxruntime
-, cudaPackages_12
+{
+  buildPythonPackage,
+  diffusers,
+  fire,
+  lib,
+  omegaconf,
+  onnxruntime,
+  peft,
+  setuptools,
+  torch,
+  torchvision,
+  transformers,
+  wheel,
+  xformers,
+  # Mandatory argument
+  src,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage {
   pname = "stream-diffusion";
-  version = "0.1.1";
+  version = "0.1.1-unstable";
   pyproject = true;
 
-  src = fetchFromGitHub {
-    owner = "cumulo-autumn";
-    repo = "StreamDiffusion";
-    rev = "v${version}";
-    hash = "sha256-XmScuZ3XIVl9qoYVDo97ZzBaCt8//suFDvHhgTKNfAk=";
-  };
+  inherit src;
 
-  nativeBuildInputs = [
+  postPatch = ''
+    nixLog "patching $PWD/setup.py"
+    substituteInPlace setup.py \
+      --replace-fail \
+        "diffusers==0.24.0" \
+        "diffusers" \
+      --replace-fail \
+        "onnx==1.15.0" \
+        "onnx" \
+      --replace-fail \
+        "onnxruntime==1.16.3" \
+        "onnxruntime" \
+      --replace-fail \
+        "protobuf==3.20.2" \
+        "protobuf"
+  '';
+
+  build-system = [
     setuptools
     wheel
   ];
-  
-  propagatedBuildInputs = [
+
+  dependencies = [
+    diffusers
+    fire
+    omegaconf
+    onnxruntime
+    peft
     torch
     torchvision
+    transformers
     xformers
-
-    (callPackage ./fire.nix {})
-    (callPackage ./polygraphy.nix {})
-    (callPackage ./onnx_graphsurgeon.nix {})
-    (callPackage ./cuda-python.nix {})
-    onnxruntime
-    diffusers
-    omegaconf 
-    transformers 
-    accelerate 
-
-    peft # undeclared in requirements
-    ((tensorrt.override { cudaPackages = cudaPackages_12; }).overrideAttrs {
-      preUnpack = ''
-        mkdir -p dist
-        tar --strip-components=2 -xf "$src" --directory=dist \
-          "TensorRT-8.6.1.6/python/tensorrt-8.6.1-cp311-none-linux_x86_64.whl"
-    ''; })
-#    ((tensorrt.override {}).overrideAttrs {
-#      preUnpack = ''
-#        mkdir -p dist
-#        tar --strip-components=2 -xf "$src" --directory=dist \
-#          "TensorRT-8.6.1.6/python/tensorrt-8.6.1-cp311-none-linux_x86_64.whl"
-#    ''; })
-  ];
+  ]
+  ++ diffusers.optional-dependencies.torch;
 
   pythonImportsCheck = [ "streamdiffusion" ];
 
-  meta = with lib; {
-    description = "StreamDiffusion: A Pipeline-Level Solution for Real-Time Interactive Generation";
+  meta = {
+    description = "Pipeline-Level Solution for Real-Time Interactive Generation";
     homepage = "https://github.com/cumulo-autumn/StreamDiffusion";
-    license = licenses.asl20;
-    maintainers = with maintainers; [ ];
+    license = lib.licenses.asl20;
   };
 }

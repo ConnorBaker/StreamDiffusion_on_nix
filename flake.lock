@@ -2,23 +2,41 @@
   "nodes": {
     "nixpkgs": {
       "locked": {
-        "lastModified": 1719956923,
-        "narHash": "sha256-nNJHJ9kfPdzYsCOlHOnbiiyKjZUW5sWbwx3cakg3/C4=",
-        "owner": "nixos",
+        "lastModified": 1756464236,
+        "narHash": "sha256-7ih+v0IjA9k/D0R2PH+5Rcgj2tvNPkH44GYYTfbzQyI=",
+        "owner": "ConnorBaker",
         "repo": "nixpkgs",
-        "rev": "706eef542dec88cc0ed25b9075d3037564b2d164",
+        "rev": "8569221ee097fe4efe7ab7a8210b8707a50b84a4",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
-        "ref": "nixos-24.05",
+        "owner": "ConnorBaker",
+        "ref": "feat/cuda-packaging-refactor",
         "repo": "nixpkgs",
         "type": "github"
       }
     },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "stream-diffusion": "stream-diffusion"
+      }
+    },
+    "stream-diffusion": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1742794326,
+        "narHash": "sha256-fmWSUYUHUVTN+GxEncdvclwUFKwAnHq8YEMb6hDX26Y=",
+        "owner": "cumulo-autumn",
+        "repo": "StreamDiffusion",
+        "rev": "e3d822292d413b570cadbee88585b9991601a886",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cumulo-autumn",
+        "ref": "pull/188/merge",
+        "repo": "StreamDiffusion",
+        "type": "github"
       }
     }
   },
